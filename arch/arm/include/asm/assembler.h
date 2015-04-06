@@ -27,27 +27,27 @@
  * Endian independent macros for shifting bytes within registers.
  */
 #ifndef __ARMEB__
-#define pull            lsr
-#define push            lsl
-#define get_byte_0      lsl #0
+#define pull		lsr
+#define push		lsl
+#define get_byte_0	lsl #0
 #define get_byte_1	lsr #8
 #define get_byte_2	lsr #16
 #define get_byte_3	lsr #24
-#define put_byte_0      lsl #0
+#define put_byte_0	lsl #0
 #define put_byte_1	lsl #8
 #define put_byte_2	lsl #16
 #define put_byte_3	lsl #24
 #else
-#define pull            lsl
-#define push            lsr
+#define pull		lsl
+#define push		lsr
 #define get_byte_0	lsr #24
 #define get_byte_1	lsr #16
 #define get_byte_2	lsr #8
-#define get_byte_3      lsl #0
+#define get_byte_3	lsl #0
 #define put_byte_0	lsl #24
 #define put_byte_1	lsl #16
 #define put_byte_2	lsl #8
-#define put_byte_3      lsl #0
+#define put_byte_3	lsl #0
 #endif
 
 /*
@@ -97,7 +97,7 @@
 
 	.macro asm_trace_hardirqs_off
 #if defined(CONFIG_TRACE_IRQFLAGS)
-	stmdb   sp!, {r0-r3, ip, lr}
+	stmdb	sp!, {r0-r3, ip, lr}
 	bl	trace_hardirqs_off
 	ldmia	sp!, {r0-r3, ip, lr}
 #endif
@@ -109,8 +109,8 @@
 	 * actually the registers should be pushed and pop'd conditionally, but
 	 * after bl the flags are certainly clobbered
 	 */
-	stmdb   sp!, {r0-r3, ip, lr}
-	bl\cond	trace_hardirqs_on
+	stmdb	sp!, {r0-r3, ip, lr}
+	bl\cond trace_hardirqs_on
 	ldmia	sp!, {r0-r3, ip, lr}
 #endif
 	.endm
@@ -179,11 +179,11 @@
 		.error "ALT_UP() content must assemble to exactly 4 bytes";\
 	.endif							;\
 	.popsection
-#define ALT_UP_B(label)					\
+#define ALT_UP_B(label) 				\
 	.equ	up_b_offset, label - 9998b			;\
 	.pushsection ".alt.smp.init", "a"			;\
 	.long	9998b						;\
-	W(b)	. + up_b_offset					;\
+	W(b)	. + up_b_offset 				;\
 	.popsection
 #else
 #define ALT_SMP(instr...)
@@ -203,7 +203,7 @@
 	ALT_SMP(W(dmb))
 	.endif
 #elif __LINUX_ARM_ARCH__ == 6
-	ALT_SMP(mcr	p15, 0, r0, c7, c10, 5)	@ dmb
+	ALT_SMP(mcr	p15, 0, r0, c7, c10, 5) @ dmb
 #else
 #error Incompatible SMP platform
 #endif
@@ -231,11 +231,11 @@
  */
 #ifdef CONFIG_THUMB2_KERNEL
 
-	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=T()
+	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=TUSER()
 9999:
 	.if	\inc == 1
 	\instr\cond\()b\()\t\().w \reg, [\ptr, #\off]
-	.elseif	\inc == 4
+	.elseif \inc == 4
 	\instr\cond\()\t\().w \reg, [\ptr, #\off]
 	.else
 	.error	"Unsupported inc macro argument"
@@ -253,7 +253,7 @@
 	.ifnc	\cond,al
 	.if	\rept == 1
 	itt	\cond
-	.elseif	\rept == 2
+	.elseif \rept == 2
 	ittt	\cond
 	.else
 	.error	"Unsupported rept macro argument"
@@ -271,12 +271,12 @@
 
 #else	/* !CONFIG_THUMB2_KERNEL */
 
-	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort, t=T()
+	.macro	usracc, instr, reg, ptr, inc, cond, rept, abort, t=TUSER()
 	.rept	\rept
 9999:
 	.if	\inc == 1
 	\instr\cond\()b\()\t \reg, [\ptr], #\inc
-	.elseif	\inc == 4
+	.elseif \inc == 4
 	\instr\cond\()\t \reg, [\ptr], #\inc
 	.else
 	.error	"Unsupported inc macro argument"
@@ -305,6 +305,14 @@
 \name:
 	.asciz "\string"
 	.size \name , . - \name
+	.endm
+
+	.macro check_uaccess, addr:req, size:req, limit:req, tmp:req, bad:req
+#ifndef CONFIG_CPU_USE_DOMAINS
+	adds	\tmp, \addr, #\size - 1
+	sbcccs	\tmp, \tmp, \limit
+	bcs	\bad
+#endif
 	.endm
 
 #endif /* __ASM_ASSEMBLER_H__ */

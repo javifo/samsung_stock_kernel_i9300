@@ -15,8 +15,8 @@
  *
  * Updated: Hewlett-Packard <paul.moore@hp.com>
  *
- *      Added support for NetLabel
- *      Added support for the policy capability bitmap
+ *	Added support for NetLabel
+ *	Added support for the policy capability bitmap
  *
  * Updated: Chad Sellers <csellers@tresys.com>
  *
@@ -568,7 +568,7 @@ static void type_attribute_bounds_av(struct context *scontext,
 					  tclass,
 					  &lo_avd);
 		if ((lo_avd.allowed & avd->allowed) == avd->allowed)
-			return;		/* no masked permission */
+			return; 	/* no masked permission */
 		masked = ~lo_avd.allowed & avd->allowed;
 	}
 
@@ -583,7 +583,7 @@ static void type_attribute_bounds_av(struct context *scontext,
 					  tclass,
 					  &lo_avd);
 		if ((lo_avd.allowed & avd->allowed) == avd->allowed)
-			return;		/* no masked permission */
+			return; 	/* no masked permission */
 		masked = ~lo_avd.allowed & avd->allowed;
 	}
 
@@ -599,7 +599,7 @@ static void type_attribute_bounds_av(struct context *scontext,
 					  tclass,
 					  &lo_avd);
 		if ((lo_avd.allowed & avd->allowed) == avd->allowed)
-			return;		/* no masked permission */
+			return; 	/* no masked permission */
 		masked = ~lo_avd.allowed & avd->allowed;
 	}
 
@@ -1230,6 +1230,10 @@ static int security_context_to_sid_core(const char *scontext, u32 scontext_len,
 	char *scontext2, *str = NULL;
 	struct context context;
 	int rc = 0;
+
+	/* An empty security context is never valid. */
+	if (!scontext_len)
+		return -EINVAL;
 
 	if (!ss_initialized) {
 		int i;
@@ -2573,12 +2577,12 @@ out:
  * returns zero.  Otherwise @peer_sid is set to SECSID_NULL and the function
  * returns a negative value.  A table summarizing the behavior is below:
  *
- *                                 | function return |      @sid
+ *				   | function return |	    @sid
  *   ------------------------------+-----------------+-----------------
- *   no peer labels                |        0        |    SECSID_NULL
- *   single peer label             |        0        |    <peer_label>
- *   multiple, consistent labels   |        0        |    <peer_label>
- *   multiple, inconsistent labels |    -<errno>     |    SECSID_NULL
+ *   no peer labels		   |	    0	     |	  SECSID_NULL
+ *   single peer label		   |	    0	     |	  <peer_label>
+ *   multiple, consistent labels   |	    0	     |	  <peer_label>
+ *   multiple, inconsistent labels |	-<errno>     |	  SECSID_NULL
  *
  */
 int security_net_peersid_resolve(u32 nlbl_sid, u32 nlbl_type,

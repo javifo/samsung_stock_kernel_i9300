@@ -34,11 +34,11 @@ enum {
 static int debug_mask = DEBUG_EXIT_SUSPEND | DEBUG_WAKEUP | DEBUG_SUSPEND;
 module_param_named(debug_mask, debug_mask, int, S_IRUGO | S_IWUSR | S_IWGRP);
 
-#define WAKE_LOCK_TYPE_MASK              (0x0f)
-#define WAKE_LOCK_INITIALIZED            (1U << 8)
-#define WAKE_LOCK_ACTIVE                 (1U << 9)
-#define WAKE_LOCK_AUTO_EXPIRE            (1U << 10)
-#define WAKE_LOCK_PREVENTING_SUSPEND     (1U << 11)
+#define WAKE_LOCK_TYPE_MASK		 (0x0f)
+#define WAKE_LOCK_INITIALIZED		 (1U << 8)
+#define WAKE_LOCK_ACTIVE		 (1U << 9)
+#define WAKE_LOCK_AUTO_EXPIRE		 (1U << 10)
+#define WAKE_LOCK_PREVENTING_SUSPEND	 (1U << 11)
 
 static DEFINE_SPINLOCK(list_lock);
 static LIST_HEAD(inactive_locks);
@@ -324,6 +324,9 @@ static void suspend(struct work_struct *work)
 	if (current_event_num == entry_event_num) {
 		if (debug_mask & DEBUG_SUSPEND)
 			pr_info("suspend: pm_suspend returned with no event\n");
+		wake_lock_timeout(&unknown_wakeup, HZ / 2);
+	} else if (ret) {
+		pr_info("PM: suspend returned(%d)\n", ret);
 		wake_lock_timeout(&unknown_wakeup, HZ / 2);
 	}
 }

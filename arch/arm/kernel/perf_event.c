@@ -157,7 +157,12 @@ armpmu_map_cache_event(u64 config)
 static int
 armpmu_map_event(u64 config)
 {
-	int mapping = (*armpmu->event_map)[config];
+	int mapping;
+
+	if (config >= PERF_COUNT_HW_MAX)
+		return -ENOENT;
+
+	mapping = (*armpmu->event_map)[config];
 	return mapping == HW_OP_UNSUPPORTED ? -EOPNOTSUPP : mapping;
 }
 
@@ -353,6 +358,9 @@ validate_event(struct cpu_hw_events *cpuc,
 {
 	struct hw_perf_event fake_event = event->hw;
 
+	if (is_software_event(event))
+		return 1;
+
 	if (event->pmu != &pmu || event->state <= PERF_EVENT_STATE_OFF)
 		return 1;
 
@@ -522,7 +530,7 @@ __hw_perf_event_init(struct perf_event *event)
 	 */
 	hwc->config_base	    = (unsigned long)mapping;
 	hwc->config		    = 0;
-	hwc->event_base		    = 0;
+	hwc->event_base 	    = 0;
 
 	if (!hwc->sample_period) {
 		hwc->sample_period  = armpmu->max_period;

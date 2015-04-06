@@ -25,12 +25,12 @@
 
 #ifdef CONFIG_SMP
 
-#define __futex_atomic_op(insn, ret, oldval, tmp, uaddr, oparg) \
+#define __futex_atomic_op(insn, ret, oldval, tmp, uaddr, oparg)	\
 	smp_mb();						\
 	__asm__ __volatile__(					\
 	"1:	ldrex	%1, [%3]\n"				\
 	"	" insn "\n"					\
-	"2:	strex	%2, %0, [%3]\n" 			\
+	"2:	strex	%2, %0, [%3]\n"				\
 	"	teq	%2, #0\n"				\
 	"	bne	1b\n"					\
 	"	mov	%0, #0\n"				\
@@ -54,7 +54,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 	"1:	ldrex	%1, [%4]\n"
 	"	teq	%1, %2\n"
 	"	ite	eq	@ explicit IT needed for the 2b label\n"
-	"2:	strexeq %0, %3, [%4]\n"
+	"2:	strexeq	%0, %3, [%4]\n"
 	"	movne	%0, #0\n"
 	"	teq	%0, #0\n"
 	"	bne	1b\n"
@@ -73,7 +73,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 #include <linux/preempt.h>
 #include <asm/domain.h>
 
-#define __futex_atomic_op(insn, ret, oldval, tmp, uaddr, oparg) \
+#define __futex_atomic_op(insn, ret, oldval, tmp, uaddr, oparg)	\
 	__asm__ __volatile__(					\
 	"1:	" TUSER(ldr) "	%1, [%3]\n"			\
 	"	" insn "\n"					\

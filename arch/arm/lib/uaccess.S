@@ -23,8 +23,8 @@
 /* Prototype: int __copy_to_user(void *to, const char *from, size_t n)
  * Purpose  : copy a block to user memory from kernel memory
  * Params   : to   - user memory
- *	    : from - kernel memory
- *	    : n    - number of bytes to copy
+ *          : from - kernel memory
+ *          : n    - number of bytes to copy
  * Returns  : Number of bytes NOT copied.
  */
 
@@ -81,17 +81,17 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 		bpl	.Lc2u_0cpy8lp
 
 .Lc2u_0rem8lp:	cmn	ip, #16
-		ldmgeia r1!, {r3 - r6}
-		stmgeia r0!, {r3 - r6}			@ Shouldnt fault
+		ldmgeia	r1!, {r3 - r6}
+		stmgeia	r0!, {r3 - r6}			@ Shouldnt fault
 		tst	ip, #8
-		ldmneia r1!, {r3 - r4}
-		stmneia r0!, {r3 - r4}			@ Shouldnt fault
+		ldmneia	r1!, {r3 - r4}
+		stmneia	r0!, {r3 - r4}			@ Shouldnt fault
 		tst	ip, #4
 		ldrne	r3, [r1], #4
 	TUSER(	strne) r3, [r0], #4			@ Shouldnt fault
 		ands	ip, ip, #3
 		beq	.Lc2u_0fupi
-.Lc2u_0nowords: teq	ip, #0
+.Lc2u_0nowords:	teq	ip, #0
 		beq	.Lc2u_finished
 .Lc2u_nowords:	cmp	ip, #2
 		ldrb	r3, [r1], #1
@@ -105,7 +105,7 @@ USER(	TUSER(	strgtb) r3, [r0], #1)			@ May fault
 .Lc2u_not_enough:
 		movs	ip, r2
 		bne	.Lc2u_nowords
-.Lc2u_finished: mov	r0, #0
+.Lc2u_finished:	mov	r0, #0
 		ldmfd	sp!, {r2, r4 - r7, pc}
 
 .Lc2u_src_not_aligned:
@@ -146,11 +146,11 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 
 .Lc2u_1rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #8
-		ldmneia r1!, {r4, r7}
+		ldmneia	r1!, {r4, r7}
 		orrne	r3, r3, r4, push #24
 		movne	r4, r4, pull #8
 		orrne	r4, r4, r7, push #24
-		stmneia r0!, {r3 - r4}			@ Shouldnt fault
+		stmneia	r0!, {r3 - r4}			@ Shouldnt fault
 		tst	ip, #4
 		movne	r3, r7, pull #8
 		ldrne	r7, [r1], #4
@@ -158,7 +158,7 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 	TUSER(	strne) r3, [r0], #4			@ Shouldnt fault
 		ands	ip, ip, #3
 		beq	.Lc2u_1fupi
-.Lc2u_1nowords: mov	r3, r7, get_byte_1
+.Lc2u_1nowords:	mov	r3, r7, get_byte_1
 		teq	ip, #0
 		beq	.Lc2u_finished
 		cmp	ip, #2
@@ -201,11 +201,11 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 
 .Lc2u_2rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #16
-		ldmneia r1!, {r4, r7}
+		ldmneia	r1!, {r4, r7}
 		orrne	r3, r3, r4, push #16
 		movne	r4, r4, pull #16
 		orrne	r4, r4, r7, push #16
-		stmneia r0!, {r3 - r4}			@ Shouldnt fault
+		stmneia	r0!, {r3 - r4}			@ Shouldnt fault
 		tst	ip, #4
 		movne	r3, r7, pull #16
 		ldrne	r7, [r1], #4
@@ -213,7 +213,7 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 	TUSER(	strne) r3, [r0], #4			@ Shouldnt fault
 		ands	ip, ip, #3
 		beq	.Lc2u_2fupi
-.Lc2u_2nowords: mov	r3, r7, get_byte_2
+.Lc2u_2nowords:	mov	r3, r7, get_byte_2
 		teq	ip, #0
 		beq	.Lc2u_finished
 		cmp	ip, #2
@@ -256,11 +256,11 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 
 .Lc2u_3rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #24
-		ldmneia r1!, {r4, r7}
+		ldmneia	r1!, {r4, r7}
 		orrne	r3, r3, r4, push #8
 		movne	r4, r4, pull #24
 		orrne	r4, r4, r7, push #8
-		stmneia r0!, {r3 - r4}			@ Shouldnt fault
+		stmneia	r0!, {r3 - r4}			@ Shouldnt fault
 		tst	ip, #4
 		movne	r3, r7, pull #24
 		ldrne	r7, [r1], #4
@@ -268,7 +268,7 @@ USER(	TUSER(	str)	r3, [r0], #4)			@ May fault
 	TUSER(	strne) r3, [r0], #4			@ Shouldnt fault
 		ands	ip, ip, #3
 		beq	.Lc2u_3fupi
-.Lc2u_3nowords: mov	r3, r7, get_byte_3
+.Lc2u_3nowords:	mov	r3, r7, get_byte_3
 		teq	ip, #0
 		beq	.Lc2u_finished
 		cmp	ip, #2
@@ -288,8 +288,8 @@ ENDPROC(__copy_to_user)
 /* Prototype: unsigned long __copy_from_user(void *to,const void *from,unsigned long n);
  * Purpose  : copy a block from user memory to kernel memory
  * Params   : to   - kernel memory
- *	    : from - user memory
- *	    : n    - number of bytes to copy
+ *          : from - user memory
+ *          : n    - number of bytes to copy
  * Returns  : Number of bytes NOT copied.
  */
 .Lcfu_dest_not_aligned:
@@ -345,17 +345,17 @@ USER(	TUSER(	ldr)	r3, [r1], #4)
 		bpl	.Lcfu_0cpy8lp
 
 .Lcfu_0rem8lp:	cmn	ip, #16
-		ldmgeia r1!, {r3 - r6}			@ Shouldnt fault
-		stmgeia r0!, {r3 - r6}
+		ldmgeia	r1!, {r3 - r6}			@ Shouldnt fault
+		stmgeia	r0!, {r3 - r6}
 		tst	ip, #8
-		ldmneia r1!, {r3 - r4}			@ Shouldnt fault
-		stmneia r0!, {r3 - r4}
+		ldmneia	r1!, {r3 - r4}			@ Shouldnt fault
+		stmneia	r0!, {r3 - r4}
 		tst	ip, #4
 	TUSER(	ldrne) r3, [r1], #4			@ Shouldnt fault
 		strne	r3, [r0], #4
 		ands	ip, ip, #3
 		beq	.Lcfu_0fupi
-.Lcfu_0nowords: teq	ip, #0
+.Lcfu_0nowords:	teq	ip, #0
 		beq	.Lcfu_finished
 .Lcfu_nowords:	cmp	ip, #2
 USER(	TUSER(	ldrb)	r3, [r1], #1)			@ May fault
@@ -369,7 +369,7 @@ USER(	TUSER(	ldrgtb) r3, [r1], #1)			@ May fault
 .Lcfu_not_enough:
 		movs	ip, r2
 		bne	.Lcfu_nowords
-.Lcfu_finished: mov	r0, #0
+.Lcfu_finished:	mov	r0, #0
 		add	sp, sp, #8
 		ldmfd	sp!, {r4 - r7, pc}
 
@@ -411,11 +411,11 @@ USER(	TUSER(	ldr)	r7, [r1], #4)			@ May fault
 
 .Lcfu_1rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #8
-		ldmneia r1!, {r4, r7}			@ Shouldnt fault
+		ldmneia	r1!, {r4, r7}			@ Shouldnt fault
 		orrne	r3, r3, r4, push #24
 		movne	r4, r4, pull #8
 		orrne	r4, r4, r7, push #24
-		stmneia r0!, {r3 - r4}
+		stmneia	r0!, {r3 - r4}
 		tst	ip, #4
 		movne	r3, r7, pull #8
 USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
@@ -423,7 +423,7 @@ USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
 		strne	r3, [r0], #4
 		ands	ip, ip, #3
 		beq	.Lcfu_1fupi
-.Lcfu_1nowords: mov	r3, r7, get_byte_1
+.Lcfu_1nowords:	mov	r3, r7, get_byte_1
 		teq	ip, #0
 		beq	.Lcfu_finished
 		cmp	ip, #2
@@ -467,11 +467,11 @@ USER(	TUSER(	ldr)	r7, [r1], #4)			@ May fault
 
 .Lcfu_2rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #16
-		ldmneia r1!, {r4, r7}			@ Shouldnt fault
+		ldmneia	r1!, {r4, r7}			@ Shouldnt fault
 		orrne	r3, r3, r4, push #16
 		movne	r4, r4, pull #16
 		orrne	r4, r4, r7, push #16
-		stmneia r0!, {r3 - r4}
+		stmneia	r0!, {r3 - r4}
 		tst	ip, #4
 		movne	r3, r7, pull #16
 USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
@@ -479,7 +479,7 @@ USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
 		strne	r3, [r0], #4
 		ands	ip, ip, #3
 		beq	.Lcfu_2fupi
-.Lcfu_2nowords: mov	r3, r7, get_byte_2
+.Lcfu_2nowords:	mov	r3, r7, get_byte_2
 		teq	ip, #0
 		beq	.Lcfu_finished
 		cmp	ip, #2
@@ -522,11 +522,11 @@ USER(	TUSER(	ldr)	r7, [r1], #4)			@ May fault
 
 .Lcfu_3rem8lp:	tst	ip, #8
 		movne	r3, r7, pull #24
-		ldmneia r1!, {r4, r7}			@ Shouldnt fault
+		ldmneia	r1!, {r4, r7}			@ Shouldnt fault
 		orrne	r3, r3, r4, push #8
 		movne	r4, r4, pull #24
 		orrne	r4, r4, r7, push #8
-		stmneia r0!, {r3 - r4}
+		stmneia	r0!, {r3 - r4}
 		tst	ip, #4
 		movne	r3, r7, pull #24
 USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
@@ -534,7 +534,7 @@ USER(	TUSER(	ldrne) r7, [r1], #4)			@ May fault
 		strne	r3, [r0], #4
 		ands	ip, ip, #3
 		beq	.Lcfu_3fupi
-.Lcfu_3nowords: mov	r3, r7, get_byte_3
+.Lcfu_3nowords:	mov	r3, r7, get_byte_3
 		teq	ip, #0
 		beq	.Lcfu_finished
 		cmp	ip, #2

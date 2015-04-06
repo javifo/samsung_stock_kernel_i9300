@@ -57,7 +57,7 @@ extern int __put_user_bad(void);
 
 #ifdef CONFIG_MMU
 
-#define USER_DS 	TASK_SIZE
+#define USER_DS		TASK_SIZE
 #define get_fs()	(current_thread_info()->addr_limit)
 
 static inline void set_fs(mm_segment_t fs)
@@ -66,7 +66,7 @@ static inline void set_fs(mm_segment_t fs)
 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
 }
 
-#define segment_eq(a,b) ((a) == (b))
+#define segment_eq(a,b)	((a) == (b))
 
 #define __addr_ok(addr) ({ \
 	unsigned long flag; \
@@ -92,7 +92,7 @@ static inline void set_fs(mm_segment_t fs)
  * which read from user space (*get_*) need to take care not to leak
  * kernel data even if the calling code is buggy and fails to check
  * the return value.  This means zeroing out the destination variable
- * or buffer on error.	Normally this is done out of line by the
+ * or buffer on error.  Normally this is done out of line by the
  * fixup code, but there are a few places where it intrudes on the
  * main code path.  When we only write to user space, there is no
  * problem.
@@ -101,17 +101,17 @@ extern int __get_user_1(void *);
 extern int __get_user_2(void *);
 extern int __get_user_4(void *);
 
-#define __GUP_CLOBBER_1 "lr", "cc"
+#define __GUP_CLOBBER_1	"lr", "cc"
 #ifdef CONFIG_CPU_USE_DOMAINS
-#define __GUP_CLOBBER_2 "ip", "lr", "cc"
+#define __GUP_CLOBBER_2	"ip", "lr", "cc"
 #else
 #define __GUP_CLOBBER_2 "lr", "cc"
 #endif
-#define __GUP_CLOBBER_4 "lr", "cc"
+#define __GUP_CLOBBER_4	"lr", "cc"
 
 #define __get_user_x(__r2,__p,__e,__l,__s)				\
 	   __asm__ __volatile__ (					\
-		__asmeq("%0", "r0") __asmeq("%1", "r2") 		\
+		__asmeq("%0", "r0") __asmeq("%1", "r2")			\
 		__asmeq("%3", "r1")					\
 		"bl	__get_user_" #__s				\
 		: "=&r" (__e), "=r" (__r2)				\
@@ -123,19 +123,19 @@ extern int __get_user_4(void *);
 		unsigned long __limit = current_thread_info()->addr_limit - 1; \
 		register const typeof(*(p)) __user *__p asm("r0") = (p);\
 		register unsigned long __r2 asm("r2");			\
-		register unsigned long __l asm("r1") = __limit; 	\
+		register unsigned long __l asm("r1") = __limit;		\
 		register int __e asm("r0");				\
 		switch (sizeof(*(__p))) {				\
-		case 1: 						\
+		case 1:							\
 			__get_user_x(__r2, __p, __e, __l, 1);		\
 			break;						\
-		case 2: 						\
+		case 2:							\
 			__get_user_x(__r2, __p, __e, __l, 2);		\
 			break;						\
-		case 4: 						\
+		case 4:							\
 			__get_user_x(__r2, __p, __e, __l, 4);		\
 			break;						\
-		default: __e = __get_user_bad(); break; 		\
+		default: __e = __get_user_bad(); break;			\
 		}							\
 		x = (typeof(*(p))) __r2;				\
 		__e;							\
@@ -148,7 +148,7 @@ extern int __put_user_8(void *, unsigned long long);
 
 #define __put_user_x(__r2,__p,__e,__l,__s)				\
 	   __asm__ __volatile__ (					\
-		__asmeq("%0", "r0") __asmeq("%2", "r2") 		\
+		__asmeq("%0", "r0") __asmeq("%2", "r2")			\
 		__asmeq("%3", "r1")					\
 		"bl	__put_user_" #__s				\
 		: "=&r" (__e)						\
@@ -160,22 +160,22 @@ extern int __put_user_8(void *, unsigned long long);
 		unsigned long __limit = current_thread_info()->addr_limit - 1; \
 		register const typeof(*(p)) __r2 asm("r2") = (x);	\
 		register const typeof(*(p)) __user *__p asm("r0") = (p);\
-		register unsigned long __l asm("r1") = __limit; 	\
+		register unsigned long __l asm("r1") = __limit;		\
 		register int __e asm("r0");				\
 		switch (sizeof(*(__p))) {				\
-		case 1: 						\
+		case 1:							\
 			__put_user_x(__r2, __p, __e, __l, 1);		\
 			break;						\
-		case 2: 						\
+		case 2:							\
 			__put_user_x(__r2, __p, __e, __l, 2);		\
 			break;						\
-		case 4: 						\
+		case 4:							\
 			__put_user_x(__r2, __p, __e, __l, 4);		\
 			break;						\
-		case 8: 						\
+		case 8:							\
 			__put_user_x(__r2, __p, __e, __l, 8);		\
 			break;						\
-		default: __e = __put_user_bad(); break; 		\
+		default: __e = __put_user_bad(); break;			\
 		}							\
 		__e;							\
 	})
@@ -185,10 +185,10 @@ extern int __put_user_8(void *, unsigned long long);
 /*
  * uClinux has only one addr space, so has simplified address limits.
  */
-#define USER_DS 		KERNEL_DS
+#define USER_DS			KERNEL_DS
 
-#define segment_eq(a,b) 	(1)
-#define __addr_ok(addr) 	(1)
+#define segment_eq(a,b)		(1)
+#define __addr_ok(addr)		(1)
 #define __range_ok(addr,size)	(0)
 #define get_fs()		(KERNEL_DS)
 
@@ -227,21 +227,21 @@ static inline void set_fs(mm_segment_t fs)
 
 #define __get_user_err(x,ptr,err)					\
 do {									\
-	unsigned long __gu_addr = (unsigned long)(ptr); 		\
-	unsigned long __gu_val; 					\
+	unsigned long __gu_addr = (unsigned long)(ptr);			\
+	unsigned long __gu_val;						\
 	__chk_user_ptr(ptr);						\
 	switch (sizeof(*(ptr))) {					\
-	case 1: __get_user_asm_byte(__gu_val,__gu_addr,err);	break;	\
-	case 2: __get_user_asm_half(__gu_val,__gu_addr,err);	break;	\
-	case 4: __get_user_asm_word(__gu_val,__gu_addr,err);	break;	\
-	default: (__gu_val) = __get_user_bad(); 			\
+	case 1:	__get_user_asm_byte(__gu_val,__gu_addr,err);	break;	\
+	case 2:	__get_user_asm_half(__gu_val,__gu_addr,err);	break;	\
+	case 4:	__get_user_asm_word(__gu_val,__gu_addr,err);	break;	\
+	default: (__gu_val) = __get_user_bad();				\
 	}								\
 	(x) = (__typeof__(*(ptr)))__gu_val;				\
 } while (0)
 
-#define __get_user_asm_byte(x,addr,err) 			\
+#define __get_user_asm_byte(x,addr,err)				\
 	__asm__ __volatile__(					\
-	"1:	" TUSER(ldrb) " %1,[%2],#0\n"			\
+	"1:	" TUSER(ldrb) "	%1,[%2],#0\n"			\
 	"2:\n"							\
 	"	.pushsection .fixup,\"ax\"\n"			\
 	"	.align	2\n"					\
@@ -253,7 +253,7 @@ do {									\
 	"	.align	3\n"					\
 	"	.long	1b, 3b\n"				\
 	"	.popsection"					\
-	: "+r" (err), "=&r" (x) 				\
+	: "+r" (err), "=&r" (x)					\
 	: "r" (addr), "i" (-EFAULT)				\
 	: "cc")
 
@@ -275,7 +275,7 @@ do {									\
 })
 #endif
 
-#define __get_user_asm_word(x,addr,err) 			\
+#define __get_user_asm_word(x,addr,err)				\
 	__asm__ __volatile__(					\
 	"1:	" TUSER(ldr) "	%1,[%2],#0\n"			\
 	"2:\n"							\
@@ -289,7 +289,7 @@ do {									\
 	"	.align	3\n"					\
 	"	.long	1b, 3b\n"				\
 	"	.popsection"					\
-	: "+r" (err), "=&r" (x) 				\
+	: "+r" (err), "=&r" (x)					\
 	: "r" (addr), "i" (-EFAULT)				\
 	: "cc")
 
@@ -308,21 +308,21 @@ do {									\
 
 #define __put_user_err(x,ptr,err)					\
 do {									\
-	unsigned long __pu_addr = (unsigned long)(ptr); 		\
+	unsigned long __pu_addr = (unsigned long)(ptr);			\
 	__typeof__(*(ptr)) __pu_val = (x);				\
 	__chk_user_ptr(ptr);						\
 	switch (sizeof(*(ptr))) {					\
 	case 1: __put_user_asm_byte(__pu_val,__pu_addr,err);	break;	\
 	case 2: __put_user_asm_half(__pu_val,__pu_addr,err);	break;	\
 	case 4: __put_user_asm_word(__pu_val,__pu_addr,err);	break;	\
-	case 8: __put_user_asm_dword(__pu_val,__pu_addr,err);	break;	\
+	case 8:	__put_user_asm_dword(__pu_val,__pu_addr,err);	break;	\
 	default: __put_user_bad();					\
 	}								\
 } while (0)
 
 #define __put_user_asm_byte(x,__pu_addr,err)			\
 	__asm__ __volatile__(					\
-	"1:	" TUSER(strb) " %1,[%2],#0\n"			\
+	"1:	" TUSER(strb) "	%1,[%2],#0\n"			\
 	"2:\n"							\
 	"	.pushsection .fixup,\"ax\"\n"			\
 	"	.align	2\n"					\
@@ -371,19 +371,19 @@ do {									\
 	: "cc")
 
 #ifndef __ARMEB__
-#define __reg_oper0	"%R2"
-#define __reg_oper1	"%Q2"
+#define	__reg_oper0	"%R2"
+#define	__reg_oper1	"%Q2"
 #else
-#define __reg_oper0	"%Q2"
-#define __reg_oper1	"%R2"
+#define	__reg_oper0	"%Q2"
+#define	__reg_oper1	"%R2"
 #endif
 
 #define __put_user_asm_dword(x,__pu_addr,err)			\
 	__asm__ __volatile__(					\
  ARM(	"1:	" TUSER(str) "	" __reg_oper1 ", [%1], #4\n"	) \
  ARM(	"2:	" TUSER(str) "	" __reg_oper0 ", [%1]\n"	) \
- THUMB( "1:	" TUSER(str) "	" __reg_oper1 ", [%1]\n"	) \
- THUMB( "2:	" TUSER(str) "	" __reg_oper0 ", [%1, #4]\n"	) \
+ THUMB(	"1:	" TUSER(str) "	" __reg_oper1 ", [%1]\n"	) \
+ THUMB(	"2:	" TUSER(str) "	" __reg_oper0 ", [%1, #4]\n"	) \
 	"3:\n"							\
 	"	.pushsection .fixup,\"ax\"\n"			\
 	"	.align	2\n"					\

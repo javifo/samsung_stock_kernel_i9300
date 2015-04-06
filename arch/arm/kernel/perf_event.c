@@ -530,7 +530,7 @@ __hw_perf_event_init(struct perf_event *event)
 	 */
 	hwc->config_base	    = (unsigned long)mapping;
 	hwc->config		    = 0;
-	hwc->event_base 	    = 0;
+	hwc->event_base		    = 0;
 
 	if (!hwc->sample_period) {
 		hwc->sample_period  = armpmu->max_period;

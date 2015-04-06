@@ -13,7 +13,7 @@
 /*
  * Domain numbers
  *
- *  DOMAIN_IO	  - domain 2 includes all IO only
+ *  DOMAIN_IO     - domain 2 includes all IO only
  *  DOMAIN_USER   - domain 1 includes all user memory only
  *  DOMAIN_KERNEL - domain 0 includes all kernel memory only
  *
@@ -22,7 +22,7 @@
  * only be mapped using supersections and supersections can only
  * be set for domain 0.  We could just default to DOMAIN_IO as zero,
  * but there may be systems with supersection support and no 36-bit
- * addressing.	In such cases, we want to map system memory with
+ * addressing.  In such cases, we want to map system memory with
  * supersections to reduce TLB misses and footprint.
  *
  * 36-bit addressing and supersections are only available on
@@ -43,7 +43,7 @@
 /*
  * Domain types
  */
-#define DOMAIN_NOACCESS 0
+#define DOMAIN_NOACCESS	0
 #define DOMAIN_CLIENT	1
 #ifdef CONFIG_CPU_USE_DOMAINS
 #define DOMAIN_MANAGER	3
@@ -60,22 +60,22 @@
 	do {						\
 	__asm__ __volatile__(				\
 	"mcr	p15, 0, %0, c3, c0	@ set domain"	\
-	  : : "r" (x)); 				\
+	  : : "r" (x));					\
 	isb();						\
 	} while (0)
 
-#define modify_domain(dom,type) 				\
+#define modify_domain(dom,type)					\
 	do {							\
 	struct thread_info *thread = current_thread_info();	\
 	unsigned int domain = thread->cpu_domain;		\
 	domain &= ~domain_val(dom, DOMAIN_MANAGER);		\
 	thread->cpu_domain = domain | domain_val(dom, type);	\
-	set_domain(thread->cpu_domain); 			\
+	set_domain(thread->cpu_domain);				\
 	} while (0)
 
 #else
 #define set_domain(x)		do { } while (0)
-#define modify_domain(dom,type) do { } while (0)
+#define modify_domain(dom,type)	do { } while (0)
 #endif
 
 /*

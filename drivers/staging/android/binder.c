@@ -71,33 +71,33 @@ BINDER_DEBUG_ENTRY(proc);
 
 /* This is only defined in include/asm-arm/sizes.h */
 #ifndef SZ_1K
-#define SZ_1K				    0x400
+#define SZ_1K                               0x400
 #endif
 
 #ifndef SZ_4M
-#define SZ_4M				    0x400000
+#define SZ_4M                               0x400000
 #endif
 
-#define FORBIDDEN_MMAP_FLAGS		    (VM_WRITE)
+#define FORBIDDEN_MMAP_FLAGS                (VM_WRITE)
 
 #define BINDER_SMALL_BUF_SIZE (PAGE_SIZE * 64)
 
 enum {
-	BINDER_DEBUG_USER_ERROR 	    = 1U << 0,
+	BINDER_DEBUG_USER_ERROR             = 1U << 0,
 	BINDER_DEBUG_FAILED_TRANSACTION     = 1U << 1,
-	BINDER_DEBUG_DEAD_TRANSACTION	    = 1U << 2,
-	BINDER_DEBUG_OPEN_CLOSE 	    = 1U << 3,
-	BINDER_DEBUG_DEAD_BINDER	    = 1U << 4,
+	BINDER_DEBUG_DEAD_TRANSACTION       = 1U << 2,
+	BINDER_DEBUG_OPEN_CLOSE             = 1U << 3,
+	BINDER_DEBUG_DEAD_BINDER            = 1U << 4,
 	BINDER_DEBUG_DEATH_NOTIFICATION     = 1U << 5,
-	BINDER_DEBUG_READ_WRITE 	    = 1U << 6,
-	BINDER_DEBUG_USER_REFS		    = 1U << 7,
-	BINDER_DEBUG_THREADS		    = 1U << 8,
-	BINDER_DEBUG_TRANSACTION	    = 1U << 9,
+	BINDER_DEBUG_READ_WRITE             = 1U << 6,
+	BINDER_DEBUG_USER_REFS              = 1U << 7,
+	BINDER_DEBUG_THREADS                = 1U << 8,
+	BINDER_DEBUG_TRANSACTION            = 1U << 9,
 	BINDER_DEBUG_TRANSACTION_COMPLETE   = 1U << 10,
-	BINDER_DEBUG_FREE_BUFFER	    = 1U << 11,
-	BINDER_DEBUG_INTERNAL_REFS	    = 1U << 12,
-	BINDER_DEBUG_BUFFER_ALLOC	    = 1U << 13,
-	BINDER_DEBUG_PRIORITY_CAP	    = 1U << 14,
+	BINDER_DEBUG_FREE_BUFFER            = 1U << 11,
+	BINDER_DEBUG_INTERNAL_REFS          = 1U << 12,
+	BINDER_DEBUG_BUFFER_ALLOC           = 1U << 13,
+	BINDER_DEBUG_PRIORITY_CAP           = 1U << 14,
 	BINDER_DEBUG_BUFFER_ALLOC_ASYNC     = 1U << 15,
 };
 static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
@@ -277,7 +277,7 @@ struct binder_buffer {
 
 enum binder_deferred_state {
 	BINDER_DEFERRED_PUT_FILES    = 0x01,
-	BINDER_DEFERRED_FLUSH	     = 0x02,
+	BINDER_DEFERRED_FLUSH        = 0x02,
 	BINDER_DEFERRED_RELEASE      = 0x04,
 };
 
@@ -318,11 +318,11 @@ struct binder_proc {
 };
 
 enum {
-	BINDER_LOOPER_STATE_REGISTERED	= 0x01,
-	BINDER_LOOPER_STATE_ENTERED	= 0x02,
-	BINDER_LOOPER_STATE_EXITED	= 0x04,
-	BINDER_LOOPER_STATE_INVALID	= 0x08,
-	BINDER_LOOPER_STATE_WAITING	= 0x10,
+	BINDER_LOOPER_STATE_REGISTERED  = 0x01,
+	BINDER_LOOPER_STATE_ENTERED     = 0x02,
+	BINDER_LOOPER_STATE_EXITED      = 0x04,
+	BINDER_LOOPER_STATE_INVALID     = 0x08,
+	BINDER_LOOPER_STATE_WAITING     = 0x10,
 	BINDER_LOOPER_STATE_NEED_RETURN = 0x20
 };
 
@@ -1349,7 +1349,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				break;
 			}
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-				     "	      node %d u%p\n",
+				     "        node %d u%p\n",
 				     node->debug_id, node->ptr);
 			binder_dec_node(node, fp->type == BINDER_TYPE_BINDER, 0);
 		} break;
@@ -1363,14 +1363,14 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 				break;
 			}
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-				     "	      ref %d desc %d (node %d)\n",
+				     "        ref %d desc %d (node %d)\n",
 				     ref->debug_id, ref->desc, ref->node->debug_id);
 			binder_dec_ref(ref, fp->type == BINDER_TYPE_HANDLE);
 		} break;
 
 		case BINDER_TYPE_FD:
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-				     "	      fd %ld\n", fp->handle);
+				     "        fd %ld\n", fp->handle);
 			if (failed_at)
 				task_close_fd(proc, fp->handle);
 			break;
@@ -1390,7 +1390,6 @@ static void binder_transaction(struct binder_proc *proc,
 	struct binder_transaction *t;
 	struct binder_work *tcomplete;
 	size_t *offp, *off_end;
-	size_t off_min;
 	struct binder_proc *target_proc;
 	struct binder_thread *target_thread = NULL;
 	struct binder_node *target_node = NULL;
@@ -1601,21 +1600,18 @@ static void binder_transaction(struct binder_proc *proc,
 		goto err_bad_offset;
 	}
 	off_end = (void *)offp + tr->offsets_size;
-	off_min = 0;
 	for (; offp < off_end; offp++) {
 		struct flat_binder_object *fp;
 		if (*offp > t->buffer->data_size - sizeof(*fp) ||
-		    *offp < off_min ||
 		    t->buffer->data_size < sizeof(*fp) ||
 		    !IS_ALIGNED(*offp, sizeof(void *))) {
-			binder_user_error("%d:%d got transaction with invalid offset, %zd (min %zd, max %zd)\n",
-					   proc->pid, thread->pid, *offp, off_min,
-					   (t->buffer->data_size - sizeof(*fp)));
+			binder_user_error("binder: %d:%d got transaction with "
+				"invalid offset, %zd\n",
+				proc->pid, thread->pid, *offp);
 			return_error = BR_FAILED_REPLY;
 			goto err_bad_offset;
 		}
 		fp = (struct flat_binder_object *)(t->buffer->data + *offp);
-		off_min = *offp + sizeof(struct flat_binder_object);
 		switch (fp->type) {
 		case BINDER_TYPE_BINDER:
 		case BINDER_TYPE_WEAK_BINDER: {
@@ -1656,7 +1652,7 @@ static void binder_transaction(struct binder_proc *proc,
 				       &thread->todo);
 
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-				     "	      node %d u%p -> ref %d desc %d\n",
+				     "        node %d u%p -> ref %d desc %d\n",
 				     node->debug_id, node->ptr, ref->debug_id,
 				     ref->desc);
 		} break;
@@ -1684,7 +1680,7 @@ static void binder_transaction(struct binder_proc *proc,
 				fp->cookie = ref->node->cookie;
 				binder_inc_node(ref->node, fp->type == BINDER_TYPE_BINDER, 0, NULL);
 				binder_debug(BINDER_DEBUG_TRANSACTION,
-					     "	      ref %d desc %d -> node %d u%p\n",
+					     "        ref %d desc %d -> node %d u%p\n",
 					     ref->debug_id, ref->desc, ref->node->debug_id,
 					     ref->node->ptr);
 			} else {
@@ -1697,7 +1693,7 @@ static void binder_transaction(struct binder_proc *proc,
 				fp->handle = new_ref->desc;
 				binder_inc_ref(new_ref, fp->type == BINDER_TYPE_HANDLE, NULL);
 				binder_debug(BINDER_DEBUG_TRANSACTION,
-					     "	      ref %d desc %d -> ref %d desc %d (node %d)\n",
+					     "        ref %d desc %d -> ref %d desc %d (node %d)\n",
 					     ref->debug_id, ref->desc, new_ref->debug_id,
 					     new_ref->desc, ref->node->debug_id);
 			}
@@ -1741,7 +1737,7 @@ static void binder_transaction(struct binder_proc *proc,
 			}
 			task_fd_install(target_proc, target_fd, file);
 			binder_debug(BINDER_DEBUG_TRANSACTION,
-				     "	      fd %ld -> %d\n", fp->handle, target_fd);
+				     "        fd %ld -> %d\n", fp->handle, target_fd);
 			/* TODO: fput? */
 			fp->handle = target_fd;
 		} break;
@@ -3291,12 +3287,12 @@ static void print_binder_thread(struct seq_file *m,
 						 "    incoming transaction", t);
 			t = t->to_parent;
 		} else {
-			print_binder_transaction(m, "	 bad transaction", t);
+			print_binder_transaction(m, "    bad transaction", t);
 			t = NULL;
 		}
 	}
 	list_for_each_entry(w, &thread->todo, entry) {
-		print_binder_work(m, "	  ", "	  pending transaction", w);
+		print_binder_work(m, "    ", "    pending transaction", w);
 	}
 	if (!print_always && m->count == header_pos)
 		m->count = start_pos;
@@ -3325,7 +3321,7 @@ static void print_binder_node(struct seq_file *m, struct binder_node *node)
 	}
 	seq_puts(m, "\n");
 	list_for_each_entry(w, &node->async_todo, entry)
-		print_binder_work(m, "	  ",
+		print_binder_work(m, "    ",
 				  "    pending async transaction", w);
 }
 
@@ -3367,7 +3363,7 @@ static void print_binder_proc(struct seq_file *m,
 		print_binder_buffer(m, "  buffer",
 				    rb_entry(n, struct binder_buffer, rb_node));
 	list_for_each_entry(w, &proc->todo, entry)
-		print_binder_work(m, "	", "  pending transaction", w);
+		print_binder_work(m, "  ", "  pending transaction", w);
 	list_for_each_entry(w, &proc->delivered_death, entry) {
 		seq_puts(m, "  has delivered dead binder\n");
 		break;
